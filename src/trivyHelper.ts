@@ -43,6 +43,7 @@ export interface TrivyResult {
 export async function runTrivy(): Promise<TrivyResult> {
     const trivyPath = await getTrivy();
     const trivyCommand = "image";
+    console.log(`trivy path ${trivyPath}`);
 
     const imageName = inputHelper.imageName;
 
@@ -65,6 +66,7 @@ export async function getTrivy(): Promise<string> {
     if(trivyVersion == 'latest'){
         latestTrivyVersion = await getLatestTrivyVersion();
     }
+    console.log(`Use Trivy version: ${latestTrivyVersion}` );
     let cachedToolPath = toolCache.find(trivyToolName, latestTrivyVersion);
     if (!cachedToolPath) {
         let trivyDownloadPath;
