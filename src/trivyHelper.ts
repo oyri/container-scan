@@ -11,6 +11,7 @@ import * as fileHelper from './fileHelper';
 import * as inputHelper from './inputHelper';
 import * as utils from './utils';
 import * as allowedlistHandler from './allowedlistHandler';
+import {trivyVersion} from "./inputHelper";
 
 export const TRIVY_EXIT_CODE = 5;
 export const trivyToolName = "trivy";
@@ -44,6 +45,7 @@ export async function runTrivy(): Promise<TrivyResult> {
     const trivyCommand = "image";
 
     const imageName = inputHelper.imageName;
+
     const trivyOptions: ExecOptions = await getTrivyExecOptions();
     console.log(`Scanning for vulnerabilties in image: ${imageName}`);
     const trivyToolRunner = new ToolRunner(trivyPath, [trivyCommand, imageName], trivyOptions);
@@ -58,8 +60,11 @@ export async function runTrivy(): Promise<TrivyResult> {
 }
 
 export async function getTrivy(): Promise<string> {
-    const latestTrivyVersion = await getLatestTrivyVersion();
 
+    let latestTrivyVersion = inputHelper.trivyVersion;
+    if(trivyVersion == 'latest'){
+        latestTrivyVersion = await getLatestTrivyVersion();
+    }
     let cachedToolPath = toolCache.find(trivyToolName, latestTrivyVersion);
     if (!cachedToolPath) {
         let trivyDownloadPath;
